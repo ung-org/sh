@@ -152,7 +152,6 @@ int sh_simple_command(struct simple_command *c)
 		fprintf(stderr, "sh: %s: %s\n", path, strerror(errno));
 		exit(1);
 	} 
-	free(path);
 
 	if (pid < 0) {
 		perror("sh");
