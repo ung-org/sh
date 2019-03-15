@@ -17,6 +17,8 @@
  *
  */
 
+#define _XOPEN_SOURCE 700
+
 #include "sh.h"
 #include <ctype.h>
 #include <errno.h>
@@ -63,10 +65,15 @@ struct command *sh_parse(const char *cmdline)
 		start++;
 	}
 
-	char *end = l + strlen(l) - 1;
+	char *end = l + strlen(l);
 	while (isspace(*end) && end > start) {
 		*end = '\0';
 		end--;
+	}
+
+	if (end <= start) {
+		free(l);
+		return NULL;
 	}
 
 	struct command *cmd = calloc(1, sizeof(*cmd));

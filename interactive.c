@@ -45,21 +45,20 @@ int sh_interactive(void)
 			break;
 		}
 
-		if (!strcmp(cmdline, "\n")) {
-			free(cmdline);
-			continue;
-		}
-
 		struct command *command = sh_parse(cmdline);
+		#if 0
 		while (command == NULL) {
 			/* append more text */
 			/* attempt parsing again */
 		}
+		#endif
 
-		sh_execute(command);
+		if (command) {
+			sh_execute(command);
+			sh_freecmd(command);
+		}
 
 		free(cmdline);
-		sh_freecmd(command);
 	}
 
 	return 0;
