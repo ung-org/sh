@@ -65,7 +65,7 @@ struct command *sh_parse(const char *cmdline)
 		start++;
 	}
 
-	char *end = l + strlen(l);
+	char *end = l + strlen(l) - 1;
 	while (isspace(*end) && end > start) {
 		*end = '\0';
 		end--;
