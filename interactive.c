@@ -17,9 +17,12 @@
  *
  */
 
+#define _XOPEN_SOURCE 700
+
 #include "sh.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 static char *sh_getline(char **cmdline)
 {
@@ -40,6 +43,11 @@ int sh_interactive(void)
 
 		if (cmdline == NULL) {
 			break;
+		}
+
+		if (!strcmp(cmdline, "\n")) {
+			free(cmdline);
+			continue;
 		}
 
 		struct command *command = sh_parse(cmdline);
