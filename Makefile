@@ -4,7 +4,7 @@
 
 default: all
 
-CFLAGS=-g -Wall -Wextra -Wpedantic -Werror -Wno-unused-function -Wno-sign-compare
+CFLAGS=-g -Wall -Wextra -Wpedantic -Werror
 
 UTILITY=sh
 SOURCES=alias.c bg.c builtins.c cd.c command.c false.c fc.c fg.c getopts.c \

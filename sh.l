@@ -63,3 +63,10 @@ OPERATOR [()|;&<>]
 [^ \t\n()|;&<>]+	{ yylval.s = yytext; return WORD; }
 
 {WHITESPACE}	;
+
+%%
+void sh_silence_warning(void)
+{
+	input();
+	yyunput(0, 0);
+}
