@@ -1,3 +1,6 @@
+#ifndef SH_H
+#define SH_H
+
 /*
  * UNG's Not GNU
  *
@@ -66,3 +69,5 @@ enum { HUP = 1, INT = 2, QUIT = 3, ABRT = 6, KILL = 9, ALRM = 14, TERM = 15 };
 void sh_trap(int trapno);
 
 int yyparse(void);
+
+#endif
