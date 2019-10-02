@@ -1,5 +1,6 @@
 sh.tab.*
 sh.yy.*
+sh.output
 *.o
 alias
 bg
