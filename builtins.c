@@ -84,6 +84,10 @@ int umask_main(int argc, char *argv[]);
 int unalias_main(int argc, char *argv[]);
 int wait_main(int argc, char *argv[]);
 
+#ifndef EXTRA_BUILTINS
+#define EXTRA_BUILTINS /* empty */
+#endif
+
 static struct builtin regular_builtins[] = {
 	{ "alias", alias_main },
 	{ "bg", bg_main },
@@ -103,6 +107,7 @@ static struct builtin regular_builtins[] = {
 	{ "umask", umask_main },
 	{ "unalias", unalias_main },
 	{ "wait", wait_main },
+	EXTRA_BUILTINS
 	{ 0, 0 },
 };
 
