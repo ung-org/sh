@@ -20,6 +20,8 @@
 #include "sh.h"
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <signal.h>
 #include <unistd.h>
 
@@ -95,7 +97,20 @@ int kill_main(int argc, char *argv[])
 		return 0;
 	}
 
-	printf("%s\n", signame);
+	if (argc <= optind) {
+		fprintf(stderr, "kill: missing operand\n");
+		return 1;
+	}
 
-	return 0;
+	int pid = atoi(argv[optind]);
+	for (size_t i = 0; i < nsigs; i++) {
+		if (!strcmp(signame, ksigs[i].name)) {
+			if (kill(pid, ksigs[i].num) != 0) {
+				perror("kill");
+			}
+		}
+	}
+
+	fprintf(stderr, "kill: invalid signal '%s'\n", signame);
+	return 1;
 }
