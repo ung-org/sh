@@ -70,4 +70,6 @@ void sh_trap(int trapno);
 
 int yyparse(void);
 
+#define getopt sh_getopt
+
 #endif

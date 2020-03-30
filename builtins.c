@@ -143,9 +143,7 @@ int sh_builtin(int argc, char *argv[])
 		}
 	}
 
-	optind = 1;
-	opterr = 1;
-	optarg = NULL;
+	optind = 0;
 
 	return m(argc, argv);
 }
