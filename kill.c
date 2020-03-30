@@ -67,7 +67,7 @@ int kill_main(int argc, char *argv[])
 
 	opterr = 0;
 	int c;
-	while ((c = getopt(argc, argv, "s:l") != -1)) {
+	while ((c = getopt(argc, argv, "s:l")) != -1) {
 		switch (c) {
 		case 's':	/** send signal [signal_name] **/
 			signame = optarg;
