@@ -19,93 +19,73 @@
 
 #include "sh.h"
 #include <errno.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
 #include <unistd.h>
 
-#define FLAG_L (1)
-#define FLAG_P (2)
-
-static int cd(char *path, int flag)
+static void cd_in_cdpath(size_t n, char p[])
 {
-	int alloced = 0;
-	int print = 0;
-
-	if (path == NULL) {
-		path = getenv("HOME");
-		if (path == NULL || !strcmp(path, "")) {
-			fprintf(stderr, "cd: Directory not specified and HOME not found\n");
-			return 1;
-		}
+	if (p[0] == '/') {
+		return;
 	}
 
-	if (!strcmp(path, "-")) {
-		path = getenv("OLDPWD");
-		print = 1;
+	if (p[0] == '.' && (p[1] == '\0' || p[1] == '/')) {
+		return;
 	}
 
-	/*
-	if (!(path[0] == '/' || !strncmp(path, "./", 2) || !strncmp(path, "../", 3))) {
-		char *opath = path;
-		path = sh_find_in_path(opath, "CDPATH");
-		if (path == NULL) {
-			fprintf(stderr, "cd: %s not found in CDPATH\n", opath);
-			return 1;
-		}
-		alloced = 1;
-	}
-	*/
-
-	if (flag != FLAG_P) {
-		if (path[0] != '/') {
-			char *base = getenv("PWD");
-			char newpath[strlen(base) + strlen(path)];
-			sprintf(newpath, "%s/%s", base, path);
-			strcpy(path, newpath);
-		}
-
-		/* TODO: canonicalize path */
-		/* TODO: shorten to <= PATH_MAX */
+	if (p[0] == '.' && p[1] == '.' && (p[2] == '\0' || p[2] == '/')) {
+		return;
 	}
 
-	char *oldpwd = getenv("PWD");
-	if (chdir(path) != 0) {
-		if (alloced) {
-			free(path);
-		}
+	char *found = sh_find_in_path(p, "CDPATH");
+	if (found != NULL) {
+		snprintf(p, n, "%s", found);
+		free(found);
+	}
+}
 
-		fprintf(stderr, "cd: Couldn't change to %s: %s\n", path, strerror(errno));
+static void cd_make_canonical(char *path)
+{
+	char tmp[strlen(path)];
+
+	/* TODO */
+
+	strcpy(path, tmp);
+}
+
+static int cd_get_home(size_t n, char path[])
+{
+	char *home = getenv("HOME");
+
+	if (home == NULL || home[0] == '\0') {
+		/* implementation-defined behavior */
+		/* TODO: try getpwuid() home directory */
+		fprintf(stderr, "cd: missing $HOME\n");
 		return 1;
 	}
 
-	if (alloced) {
-		free(path);
-	}
-
-	if (print) {
-		puts(path);
-	}
-
-	setenv("OLDPWD", oldpwd, 1);
-	setenv("PWD", path, 1);
+	snprintf(path, n, "%s", home);
 	return 0;
 }
 
 int cd_main(int argc, char *argv[])
 {
-	int flag = 0;
-	int c;
+	enum { LOGICALLY, PHYSICALLY } dotdot = LOGICALLY;
+	char curpath[PATH_MAX];
+	char oldpath[PATH_MAX];
 
-	while ((c = getopt(argc, argv, ":LP")) != -1) {
+	int c;
+	while ((c = getopt(argc, argv, "LP")) != -1) {
 		switch (c) {
 		case 'L':
-			flag = FLAG_L;
+			dotdot = LOGICALLY;
 			break;
 
 		case 'P':
-			flag = FLAG_P;
+			dotdot = PHYSICALLY;
 			break;
 
 		default:
@@ -118,5 +98,40 @@ int cd_main(int argc, char *argv[])
 		return 1;
 	}
 
-	return cd(argv[optind], flag);
+	getcwd(oldpath, sizeof(oldpath));
+
+	if (argv[optind] == NULL) {
+		if (cd_get_home(sizeof(curpath), curpath) != 0) {
+			return 1;
+		}
+	} else {
+		strcpy(curpath, argv[optind]);
+	}
+
+	cd_in_cdpath(sizeof(curpath), curpath);
+
+	if (dotdot == LOGICALLY) {
+		cd_make_canonical(curpath);
+	}
+
+	if (strcmp(curpath, "-") == 0) {
+		char *oldpwd = getenv("OLDPWD");
+		if (oldpwd == NULL) {
+			fprintf(stderr, "cd: no $OLDPWD\n");
+			return 1;
+		}
+		if (chdir(oldpwd) != 0) {
+			fprintf(stderr, "cd: %s: %s\n", oldpwd, strerror(errno));
+			return 1;
+		}
+		puts(oldpwd);
+		strcpy(curpath, oldpwd);
+	} else if (chdir(curpath) != 0) {
+		fprintf(stderr, "cd: %s: %s\n", curpath, strerror(errno));
+		return 1;
+	}
+
+	setenv("OLDPWD", oldpath, 1);
+	setenv("PWD", curpath, 1);
+	return 0;
 }
