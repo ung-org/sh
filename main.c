@@ -72,9 +72,12 @@ int sh_main(int argc, char *argv[])
 
 	if (mode == COMMAND) {
 		/* shift argv */
-		execvp(argv[optind], argv + optind);
-		fprintf(stderr, "sh: %s: %s\n", argv[optind], strerror(errno));
-		return 1;
+		/* TODO: join all remaining args together before parsing */
+		struct command *cmd = sh_parse(argv[optind]);
+		return sh_execute(cmd);	
+		//execvp(argv[optind], argv + optind);
+		//fprintf(stderr, "sh: %s: %s\n", argv[optind], strerror(errno));
+		//return 1;
 	}
 
 	if (argv[optind] == NULL && isatty(STDIN_FILENO) && isatty(STDERR_FILENO)) {
