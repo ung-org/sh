@@ -6,7 +6,6 @@ alias
 bg
 cd
 command
-false
 fc
 fg
 getopts

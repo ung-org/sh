@@ -1,7 +1,7 @@
 /*
  * UNG's Not GNU
  *
- * Copyright (c) 2011-2017, Jakob Kaivo <jkk@ung.org>
+ * Copyright (c) 2011-2020, Jakob Kaivo <jkk@ung.org>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -17,8 +17,5 @@
  *
  */
 
-int false_main(int argc, char *argv[])
-{
-	(void)argc; (void)argv;
-	return 1;
-}
+#define main false_main
+#include "false/false.c"
