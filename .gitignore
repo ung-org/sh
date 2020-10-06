@@ -14,7 +14,6 @@ newgrp
 pwd
 read
 sh
-true
 ulimit
 umask
 unalias
