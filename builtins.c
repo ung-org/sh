@@ -168,3 +168,11 @@ int sh_is_regular_builtin(const char *util)
 {
 	return is_builtin(util, regular_builtins);
 }
+
+#define main true_main
+#include "true/true.c"
+#undef main
+
+#define main false_main
+#include "false/false.c"
+#undef main
