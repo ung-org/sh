@@ -8,3 +8,6 @@
 [submodule "true"]
 	path = true
 	url = ../true/
+[submodule "pwd"]
+	path = pwd
+	url = ../pwd/

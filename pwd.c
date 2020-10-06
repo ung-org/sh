@@ -1,7 +1,7 @@
 /*
  * UNG's Not GNU
  * 
- * Copyright (c) 2011, Jakob Kaivo <jakob@kaivo.net>
+ * Copyright (c) 2011-2020, Jakob Kaivo <jakob@kaivo.net>
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -18,47 +18,11 @@
  */
 
 #include "sh.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#define main real_pwd_main
+#include "pwd/pwd.c"
 
-const char *pwd_desc = "return working directory name";
-const char *pwd_inv  = "pwd [-L|-P]";
-
-int
-pwd_main (int argc, char **argv)
+int pwd_main(int argc, char *argv[])
 {
-  //char mode = 'L';
-  char *cwd;
-  int c;
-
-  while ((c = getopt (argc, argv, ":LP")) != -1) {
-    switch (c) {
-      case 'L':
-      case 'P':
-        ////mode = c;
-        break;
-      default:
-        return 1;
-    }
-  }
-
-  if (optind < argc)
-    return 1;
- 
-  // FIXME:
-  // if (mode == 'L')
-  //   if (cwd !~ /./ && cwd !~ /../)
-  //     print (cwd);
-  //   else if (strlen (cwd) > PATH_MAX && NO_DOT_OR_DOT_DOT)
-  //     unspecified
-  //   else
-  //     mode = 'P';
-  // if (mode == 'P')
-  //  decompose_to_shortest_path
-  //  print (decomposed)
-  cwd = (char*)getenv ("PWD");
-  printf ("%s\n", cwd);
-
-  return 0;
+	opterr = 0;
+	return real_pwd_main(argc, argv);
 }

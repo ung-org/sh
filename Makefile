@@ -21,7 +21,7 @@ OBJECTS=alias.o bg.o builtins.o cd.o command.o fc.o fg.o getopts.o \
 	unset.o \
 	interactive.o parse.o init.o getopt.o \
 	sh.tab.o sh.yy.o
-BUILTINS=alias bg cd command fc fg getopts jobs newgrp pwd read \
+BUILTINS=alias bg cd command fc fg getopts jobs newgrp read \
 	ulimit umask unalias wait
 
 all: $(UTILITY) $(L10N) $(BUILTINS)
