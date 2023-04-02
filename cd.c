@@ -49,7 +49,8 @@ static void cd_in_cdpath(size_t n, char p[])
 
 static void cd_make_canonical(char *path)
 {
-	char tmp[strlen(path)];
+	char tmp[strlen(path) + 1];
+	strcpy(tmp, path);
 
 	/* TODO */
 
