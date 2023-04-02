@@ -140,7 +140,7 @@ int unalias_main(int argc, char **argv)
 	int all = 0;
 
 	int c = 0;
-	while (getopt(argc, argv, "a") != -1) {
+	while ((c = getopt(argc, argv, "a")) != -1) {
 		switch (c) {
 		case 'a':
 			all = 1;
