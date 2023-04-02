@@ -17,8 +17,6 @@
  *
  */
 
-#define _XOPEN_SOURCE 700
-
 #include "sh.h"
 #include <ctype.h>
 #include <errno.h>
@@ -27,10 +25,10 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <wordexp.h>
 
 struct simple_command {
-	int argc;
-	char **argv;
+	wordexp_t we;
 	char **redirection;
 };
 
@@ -59,64 +57,34 @@ struct command {
 
 struct command *sh_parse(const char *cmdline)
 {
-	char *l = strdup(cmdline);
-	char *start = l;
-	while (isspace(*start)) {
-		start++;
+	struct command *cmd = calloc(1, sizeof(*cmd));
+	if (cmd == NULL) {
+		return cmd;
 	}
+	cmd->type = SIMPLE;
 
-	char *end = l + strlen(l) - 1;
-	while (isspace(*end) && end > start) {
-		*end = '\0';
-		end--;
-	}
-
-	if (end <= start) {
-		free(l);
+	if (wordexp(cmdline, &cmd->cmd.simple.we, WRDE_SHOWERR) != 0) {
+		free(cmd);
 		return NULL;
 	}
 
-	struct command *cmd = calloc(1, sizeof(*cmd));
-	if (cmd == NULL) {
-		/* TODO: should probably crash here */
-		return cmd;
-	}
-
-	cmd->type = SIMPLE;
-	cmd->cmd.simple.argv = calloc(100, sizeof(char *));
-
-	char *next = strtok(start, " ");
-
-	char *alias = sh_get_alias(next);
+	char *alias = sh_get_alias(cmd->cmd.simple.we.we_wordv[0]);
 	if (alias) {
-		char *params = strtok(NULL, " ");
-		if (params == NULL) {
-			free(l);
+		if (cmd->cmd.simple.we.we_wordc == 1) {
+			free(cmd);
 			return sh_parse(alias);
 		}
-		size_t len = strlen(alias) + strlen(params) + 2;
-		char *expanded = calloc(1, len);
-		snprintf(expanded, len, "%s %s", alias, params);
-		free(l);
-		l = expanded;
-		next = strtok(l, " ");
+
+		/* TODO: handle parameters */
 	}
 
-	do {
-		cmd->cmd.simple.argv[cmd->cmd.simple.argc++] = strdup(next);
-	} while ((next = strtok(NULL, " ")) != NULL);
-	
-	free(l);
 	return cmd;
 }
 
 void sh_freecmd(struct command *command)
 {
 	if (command->type == SIMPLE) {
-		struct simple_command *c = &(command->cmd.simple);
-		for (int i = 0; c->argv[i]; i++) {
-			free(c->argv[i]);
-		}
+		wordfree(&command->cmd.simple.we);
 	}
 	free(command);
 }
@@ -145,38 +113,39 @@ char *sh_find_in_path(const char *file, const char *pathvar)
 
 int sh_simple_command(struct simple_command *c)
 {
-	char *path = c->argv[0];
+	char *path = c->we.we_wordv[0];
 
 	if (!strchr(path, '/')) {
 		if (sh_is_special_builtin(path)) {
-			return sh_builtin(c->argc, c->argv);
+			return sh_builtin(c->we.we_wordc, c->we.we_wordv);
 		}
 
 		if (sh_is_unspecified(path)) {
-			return sh_builtin(c->argc, c->argv);
+			return sh_builtin(c->we.we_wordc, c->we.we_wordv);
 			return 1;
 		}
 
 		/*
 		if (sh_is_function(path)) {
-			return sh_function(c->argc, c->argv);
+			return sh_function(c->we.we_wordc, c->we.we_wordv);
 		}
 		*/
 
 		if (sh_is_regular_builtin(path)) {
-			return sh_builtin(c->argc, c->argv);
+			return sh_builtin(c->we.we_wordc, c->we.we_wordv);
 		}
 
 		path = sh_find_in_path(path, "PATH");
 	}
 
 	if (path == NULL) {
-		fprintf(stderr, "sh: %s: %s\n", c->argv[0], strerror(ENOENT));
+		fprintf(stderr, "sh: %s: %s\n", c->we.we_wordv[0], strerror(ENOENT));
+		return 1;
 	}
 
 	pid_t pid = fork();
 	if (pid == 0) {
-		execv(path, c->argv/*, exported_environ*/);
+		execv(path, c->we.we_wordv/*, exported_environ*/);
 		fprintf(stderr, "sh: %s: %s\n", path, strerror(errno));
 		exit(1);
 	} 
