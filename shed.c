@@ -60,6 +60,9 @@ struct shed *shed(struct shed *e)
 		}
 	} while (e->handle(e, &tio, c));
 
+	/* TODO: make sure this doesn't overflow */
+	e->cur->buf[e->cur->nread] = '\0';
+
 	tcsetattr(STDIN_FILENO, TCSADRAIN, &original_tio);
 	return e;
 }
