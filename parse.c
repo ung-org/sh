@@ -145,7 +145,8 @@ int sh_simple_command(struct simple_command *c)
 
 	pid_t pid = fork();
 	if (pid == 0) {
-		execv(path, c->we.we_wordv/*, exported_environ*/);
+		extern char **environ;
+		execve(path, c->we.we_wordv, environ);
 		fprintf(stderr, "sh: %s: %s\n", path, strerror(errno));
 		exit(1);
 	} 
