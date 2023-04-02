@@ -52,6 +52,7 @@ int sh_geto(char *option);
 int sh_interactive(void);
 
 int sh_is_special_builtin(const char *util);
+int sh_is_unspecified(const char *util);
 int sh_is_regular_builtin(const char *util);
 int (*sh_get_builtin(const char *util))(int argc, char *argv[]);
 int sh_builtin(int argc, char *argv[]);

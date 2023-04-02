@@ -152,12 +152,10 @@ int sh_simple_command(struct simple_command *c)
 			return sh_builtin(c->argc, c->argv);
 		}
 
-		/*
-		if (sh_is_unspecified_utility(path)) {
-			fprintf(stderr, "sh: %s has unspecified behavior, doing nothing\n", path);
+		if (sh_is_unspecified(path)) {
+			return sh_builtin(c->argc, c->argv);
 			return 1;
 		}
-		*/
 
 		/*
 		if (sh_is_function(path)) {

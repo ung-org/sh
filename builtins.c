@@ -85,6 +85,8 @@ int umask_main(int argc, char *argv[]);
 int unalias_main(int argc, char *argv[]);
 int wait_main(int argc, char *argv[]);
 
+int unspecified_main(int argc, char *argv[]);
+
 #ifndef EXTRA_BUILTINS
 #define EXTRA_BUILTINS /* empty */
 #endif
@@ -110,6 +112,60 @@ static struct builtin regular_builtins[] = {
 	{ "unalias", unalias_main },
 	{ "wait", wait_main },
 	EXTRA_BUILTINS
+	{ 0, 0 },
+};
+
+static struct builtin unspecified_builtins[] = {
+	{ "alloc", unspecified_main },
+	{ "autoload", unspecified_main },
+	{ "bind", unspecified_main },
+	{ "bindkey", unspecified_main },
+	{ "builtin", unspecified_main },
+	{ "bye", unspecified_main },
+	{ "caller", unspecified_main },
+	{ "cap", unspecified_main },
+	{ "chdir", unspecified_main },
+	{ "clone", unspecified_main },
+	{ "copmarguments", unspecified_main },
+	{ "compcall", unspecified_main },
+	{ "compctl", unspecified_main },
+	{ "compdescribe", unspecified_main },
+	{ "compfiles", unspecified_main },
+	{ "compgen", unspecified_main },
+	{ "compgroups", unspecified_main },
+	{ "complete", unspecified_main },
+	{ "compquote", unspecified_main },
+	{ "comptags", unspecified_main },
+	{ "comptry", unspecified_main },
+	{ "compvalues", unspecified_main },
+	{ "declare", unspecified_main },
+	{ "dirs", unspecified_main },
+	{ "disable", unspecified_main },
+	{ "disown", unspecified_main },
+	{ "dosh", unspecified_main },
+	{ "echotc", unspecified_main },
+	{ "echoti", unspecified_main },
+	{ "help", unspecified_main },
+	{ "history", unspecified_main },
+	{ "hist", unspecified_main },
+	{ "let", unspecified_main },
+	{ "local", unspecified_main },
+	{ "login", unspecified_main },
+	{ "logout", unspecified_main },
+	{ "map", unspecified_main },
+	{ "mapfile", unspecified_main },
+	{ "popd", unspecified_main },
+	{ "print", unspecified_main },
+	{ "pushed", unspecified_main },
+	{ "readarray", unspecified_main },
+	{ "repeat", unspecified_main },
+	{ "savehistory", unspecified_main },
+	{ "source", unspecified_main },
+	{ "shopt", unspecified_main },
+	{ "stop", unspecified_main },
+	{ "suspend", unspecified_main },
+	{ "typeset", unspecified_main },
+	{ "whence", unspecified_main },
 	{ 0, 0 },
 };
 
@@ -140,11 +196,15 @@ int sh_builtin(int argc, char *argv[])
 	int (*m)(int, char *[]) = sh_getbuiltin(util, special_builtins);
 	if (m == NULL) {
 		m = sh_getbuiltin(util, regular_builtins);
-		if (m == NULL) {
-			return 1;
-		}
 	}
 
+	if (m == NULL) {
+		m = sh_getbuiltin(util, unspecified_builtins);
+	}
+
+	if (m == NULL) {
+		return 1;
+	}
 	optind = 0;
 
 	return m(argc, argv);
@@ -169,6 +229,11 @@ int sh_is_special_builtin(const char *util)
 int sh_is_regular_builtin(const char *util)
 {
 	return is_builtin(util, regular_builtins);
+}
+
+int sh_is_unspecified(const char *util)
+{
+	return is_builtin(util, unspecified_builtins);
 }
 
 #define main true_main

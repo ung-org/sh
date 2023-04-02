@@ -25,6 +25,10 @@ int type_main(int argc, char **argv)
 			continue;
 		}
 
+		if (sh_is_unspecified(argv[i])) {
+			printf("%s: allowable POSIX extension (not implemented)\n", argv[i]);
+		}
+
 		/*
 		if (sh_is_function(argv[i])) {
 			printf("%s: function\n", argv[i]);
