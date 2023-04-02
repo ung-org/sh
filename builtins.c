@@ -79,6 +79,7 @@ int newgrp_main(int argc, char *argv[]);
 int pwd_main(int argc, char *argv[]);
 int read_main(int argc, char *argv[]);
 int true_main(int argc, char *argv[]);
+int type_main(int argc, char *argv[]);
 int ulimit_main(int argc, char *argv[]);
 int umask_main(int argc, char *argv[]);
 int unalias_main(int argc, char *argv[]);
@@ -103,6 +104,7 @@ static struct builtin regular_builtins[] = {
 	{ "pwd", pwd_main },
 	{ "read", read_main },
 	{ "true", true_main },
+	{ "type", type_main },
 	{ "ulimit", ulimit_main },
 	{ "umask", umask_main },
 	{ "unalias", unalias_main },
