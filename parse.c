@@ -86,6 +86,22 @@ struct command *sh_parse(const char *cmdline)
 	cmd->cmd.simple.argv = calloc(100, sizeof(char *));
 
 	char *next = strtok(start, " ");
+
+	char *alias = sh_get_alias(next);
+	if (alias) {
+		char *params = strtok(NULL, " ");
+		if (params == NULL) {
+			free(l);
+			return sh_parse(alias);
+		}
+		size_t len = strlen(alias) + strlen(params) + 2;
+		char *expanded = calloc(1, len);
+		snprintf(expanded, len, "%s %s", alias, params);
+		free(l);
+		l = expanded;
+		next = strtok(l, " ");
+	}
+
 	do {
 		cmd->cmd.simple.argv[cmd->cmd.simple.argc++] = strdup(next);
 	} while ((next = strtok(NULL, " ")) != NULL);
@@ -135,6 +151,13 @@ int sh_simple_command(struct simple_command *c)
 		if (sh_is_special_builtin(path)) {
 			return sh_builtin(c->argc, c->argv);
 		}
+
+		/*
+		if (sh_is_unspecified_utility(path)) {
+			fprintf(stderr, "sh: %s has unspecified behavior, doing nothing\n", path);
+			return 1;
+		}
+		*/
 
 		/*
 		if (sh_is_function(path)) {

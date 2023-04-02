@@ -42,6 +42,7 @@ struct command;
 struct command *sh_parse(const char *cmdline);
 void sh_freecmd(struct command *cmd);
 int sh_execute(struct command *cmd);
+char *sh_get_alias(const char *cmd);
 
 void sh_set(char option, int value);
 void sh_seto(char *option, int value);
