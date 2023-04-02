@@ -34,6 +34,11 @@ int sh_interactive(void)
 	};
 
 	while (shed(&ed) != NULL) {
+		if (ed.cur->nread == 1 && ed.cur->buf[0] == CTRL_D) {
+			printf("\n");
+			return 0;
+		}
+
 		struct command *command = sh_parse(ed.cur->buf);
 		if (command) {
 			sh_execute(command);
