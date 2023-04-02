@@ -29,6 +29,7 @@ struct shed *shed(struct shed *e)
 		e->head = e->cur;
 		e->tail = e->cur;
 	} else {
+		/* TODO: skip if the last input was blank */
 		e->tail->next = calloc(1, sizeof(*e->cur));
 		if (e->tail->next == NULL) {
 			/* FIXME */
