@@ -76,7 +76,7 @@ int shed_handle_non_vi(struct shed *e, struct termios *t, char c)
 		case CTRL_F:	return shed_move_forward(e);
 		case CTRL_G:	break; // return abort(e)?
 		case CTRL_H:	return shed_backspace(e);
-		case CTRL_I:	break; // return complete_wordexp(e);
+		case CTRL_I:	return shed_complete_wordexp(e);
 		case CTRL_J:	return shed_execute(e);
 		case CTRL_K:	return shed_delete_toend(e);
 		case CTRL_L:	return shed_redraw(e);

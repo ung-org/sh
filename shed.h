@@ -77,6 +77,8 @@ int shed_replace(struct shed *e);
 int shed_start_over(struct shed *e);
 int shed_worderase(struct shed *e);
 
+int shed_complete_wordexp(struct shed *e);
+
 int shed_history_backward(struct shed *e);
 int shed_history_forward(struct shed *e);
 
