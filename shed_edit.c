@@ -69,10 +69,10 @@ int shed_handle_edit(struct shed *e, struct termios *t, char c)
 	case 'U':	// r = shed_bigundo(e);	break;
 
 	case 'k':	/* FALLTHROUGH */
-	case '-':	// r = shed_history_back(e);	break;
+	case '-':	r = shed_history_backward(e);	break;
 
 	case 'j':	/* FALLTHOUGH */
-	case '+':	// r = shed_history_forward(e);	break;
+	case '+':	r = shed_history_forward(e);	break;
 
 	case 'G':	// r = shed_history_first(e);	break;
 	case '/':	// r = shed_history_backsearch(e);	break;

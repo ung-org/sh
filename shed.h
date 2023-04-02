@@ -36,6 +36,8 @@ enum {
 struct termios;
 
 struct buffer {
+	struct buffer *next;
+	struct buffer *prev;
 	size_t len;
 	size_t pos;
 	ssize_t nread;
@@ -74,6 +76,9 @@ int shed_redraw(struct shed *e);
 int shed_replace(struct shed *e);
 int shed_start_over(struct shed *e);
 int shed_worderase(struct shed *e);
+
+int shed_history_backward(struct shed *e);
+int shed_history_forward(struct shed *e);
 
 int shed_move_forward(struct shed *e);
 int shed_move_backward(struct shed *e);

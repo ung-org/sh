@@ -108,7 +108,8 @@ int shed_execute(struct shed *e)
 {
 	struct buffer *b = e->cur;
 	b->pos = b->nread;
-	shed_insert_char(b, '\n');
+	//shed_insert_char(b, '\n');
+	write(STDOUT_FILENO, "\n", 1);
 	if (e->handle == shed_handle_edit) {
 		e->handle = shed_handle_insert;
 	}

@@ -47,6 +47,12 @@ int shed_handle_non_vi(struct shed *e, struct termios *t, char c)
 	if (c == '\033') {
 		char esc[2];
 		read(STDIN_FILENO, esc, 2);
+		if (esc[1] == 'A') {
+			return shed_history_backward(e);
+		}
+		if (esc[1] == 'B') {
+			return shed_history_forward(e);
+		}
 		if (esc[1] == 'C') {
 			return shed_move_forward(e);
 		}
@@ -75,9 +81,9 @@ int shed_handle_non_vi(struct shed *e, struct termios *t, char c)
 		case CTRL_K:	return shed_delete_toend(e);
 		case CTRL_L:	return shed_redraw(e);
 		case CTRL_M:	return shed_execute(e);
-		case CTRL_N:	// return history_forward(e);
+		case CTRL_N:	return shed_history_forward(e);
 		case CTRL_O:	// return ??? /* ??? */
-		case CTRL_P:	// return history_backward(e);
+		case CTRL_P:	return shed_history_backward(e);
 		case CTRL_Q:	// /* TTY START */
 		case CTRL_R:	// return history_backsearch(e);
 		case CTRL_S:	// /* TTY STOP */

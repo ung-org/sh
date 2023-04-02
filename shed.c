@@ -22,12 +22,22 @@ struct shed *shed(struct shed *e)
 	if (e->cur == NULL) {
 		e->cur = calloc(1, sizeof(*e->cur));
 		if (e->cur == NULL) {
+			/* FIXME */
 			return e;
 		}
 		e->handle = shed_handle_non_vi;
+		e->head = e->cur;
+		e->tail = e->cur;
+	} else {
+		e->tail->next = calloc(1, sizeof(*e->cur));
+		if (e->tail->next == NULL) {
+			/* FIXME */
+			return e;
+		}
+		e->tail->next->prev = e->tail;
+		e->tail = e->tail->next;
+		e->cur = e->tail;
 	}
-
-	memset(e->cur, '\0', sizeof(*e->cur));
 
 	struct termios original_tio;
 	if (tcgetattr(STDIN_FILENO, &original_tio) != 0) {
