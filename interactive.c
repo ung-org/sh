@@ -39,6 +39,10 @@ int sh_interactive(void)
 			return 0;
 		}
 
+		if (strlen(ed.cur->buf) == 0) {
+			continue;
+		}
+
 		struct command *command = sh_parse(ed.cur->buf);
 		if (command) {
 			sh_execute(command);

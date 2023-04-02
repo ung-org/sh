@@ -30,7 +30,7 @@ int shed_backspace(struct shed *e)
 int shed_cancel(struct shed *e)
 {
 	struct buffer *b = e->cur;
-	write(STDOUT_FILENO, "^C", 2);
+	write(STDOUT_FILENO, "^C\n", 3);
 	b->nread = 0;
 	return 0;
 }
