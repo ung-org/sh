@@ -19,46 +19,26 @@
 
 #define _XOPEN_SOURCE 700
 
-#include "sh.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-static char *sh_getline(char **cmdline)
-{
-	char *prompt = getenv(*cmdline ? "PS2" : "PS1");
-	/* wordexpand prompt */
-	fprintf(stderr, "%s", prompt);
-
-	size_t n = 0;
-	getline(cmdline, &n, stdin);
-	return *cmdline;
-}
+#include "sh.h"
+#include "shed.h"
 
 int sh_interactive(void)
 {
-	while (!feof(stdin)) {
-		char *cmdline = NULL;
-		sh_getline(&cmdline);
+	struct shed ed = {
+		.prompt = getenv("PS1"),
+		.handle = shed_handle_non_vi,
+	};
 
-		if (cmdline == NULL) {
-			break;
-		}
-
-		struct command *command = sh_parse(cmdline);
-		#if 0
-		while (command == NULL) {
-			/* append more text */
-			/* attempt parsing again */
-		}
-		#endif
-
+	while (shed(&ed) != NULL) {
+		struct command *command = sh_parse(ed.cur->buf);
 		if (command) {
 			sh_execute(command);
 			sh_freecmd(command);
 		}
-
-		free(cmdline);
 	}
 
 	return 0;

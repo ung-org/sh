@@ -310,3 +310,11 @@ sequential_sep : ';' linebreak {
 		puts("sequential_sep:newline_list");
 	}
 	;
+
+%%
+
+int yyerror(const char *s)
+{
+	return fprintf(stderr, "%s\n", s);
+}
+

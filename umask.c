@@ -47,19 +47,20 @@ int umask_main(int argc, char *argv[])
 	umask(mask);
 
 	if (symbolic) {
-		fputs("u=", stdout);
-		fputs(mask & S_IRUSR ? "" : "r", stdout);
-		fputs(mask & S_IWUSR ? "" : "w", stdout);
-		fputs(mask & S_IXUSR ? "" : "x", stdout);
-		fputs(",g=", stdout);
-		fputs(mask & S_IRGRP ? "" : "r", stdout);
-		fputs(mask & S_IWGRP ? "" : "w", stdout);
-		fputs(mask & S_IXGRP ? "" : "x", stdout);
-		fputs(",o=", stdout);
-		fputs(mask & S_IRGRP ? "" : "r", stdout);
-		fputs(mask & S_IWGRP ? "" : "w", stdout);
-		fputs(mask & S_IXGRP ? "" : "x", stdout);
-		putchar('\n');
+		printf("u=");
+		printf("%s", mask & S_IRUSR ? "" : "r");
+		printf("%s", mask & S_IWUSR ? "" : "w");
+		printf("%s", mask & S_IXUSR ? "" : "x");
+
+		printf(",g=");
+		printf("%s", mask & S_IRGRP ? "" : "r");
+		printf("%s", mask & S_IWGRP ? "" : "w");
+		printf("%s", mask & S_IXGRP ? "" : "x");
+
+		printf("%s", ",o=");
+		printf("%s", mask & S_IRGRP ? "" : "r");
+		printf("%s", mask & S_IWGRP ? "" : "w");
+		printf("%s\n", mask & S_IXGRP ? "" : "x");
 	} else {
 		printf("%04o\n", mask);
 	}

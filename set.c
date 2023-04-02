@@ -110,11 +110,10 @@ int set_main(int argc, char *argv[])
 			break;
 
 		case ':':
-			if (optopt == 'o') {
-				show = 1;
-			} else {
+			if (optopt != 'o') {
 				return 1;
 			}
+			show = 1;
 			break;
 
 		default:

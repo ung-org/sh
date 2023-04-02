@@ -1,9 +1,7 @@
 %{
+#include <stdio.h>
 #include "sh.h"
 #include "sh.tab.h"
-/* thanks, flex, for implicitly declaring identifiers */
-/* bonus points for something that isn't part of ISO C */
-extern int fileno(FILE *);
 %}
 
 NAME [_a-zA-Z0-9]
@@ -65,6 +63,11 @@ OPERATOR [()|;&<>]
 {WHITESPACE}	;
 
 %%
+int yywrap(void)
+{
+	return 1;
+}
+
 void sh_silence_warning(void)
 {
 	input();
