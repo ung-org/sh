@@ -132,6 +132,7 @@ int cd_main(int argc, char *argv[])
 		return 1;
 	}
 
+	getcwd(curpath, sizeof(curpath));
 	setenv("OLDPWD", oldpath, 1);
 	setenv("PWD", curpath, 1);
 	return 0;
